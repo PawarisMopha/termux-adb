@@ -1,0 +1,36 @@
+name: CI for termux-adb
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: '.'
+
+      - name: Basic execution check
+        run: |
+          echo "Testing installation script structure..."
+          bash -n install.sh
+
+      - name: Prepare file
+        run: |
+          mkdir build
+          cp install.sh build/termux-adb
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: termux-adb
+          path: build/termux-adb
